@@ -21,22 +21,22 @@ public class CardController {
 
     @RequestMapping(value = "/card/{idPatient}/{idDoctor}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)  /*Прописываем путь 
     по которому вызывается метод и прописываем его работу */
-    public ResponseEntity<Card> getCarByIdsPatientAndDoctor(@PathVariable("idPatient") Long idPatient,
+    public ResponseEntity<Card> getCarByIdsPatientAndDoctor(@PathVariable("idPatient") Long idPatient,  //обьявляем метод
                                                             @PathVariable("idDoctor") Long idDoctor) {
-        if (idPatient == null || idDoctor == null) {
+        if (idPatient == null || idDoctor == null) {            // проверка существования значения
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        List<Card> cards = this.cardService.findAll();
-        Card card = new Card();
-        for (Card stepCard:
+        List<Card> cards = this.cardService.findAll();     //находим все карточки
+        Card card = new Card();    //создаем промежуточный объект
+        for (Card stepCard:       // проходим по списку всех карт
              cards) {
-            if ((stepCard.getPatient().getId().equals(idPatient))
+            if ((stepCard.getPatient().getId().equals(idPatient))       //проверяем равны ли в каждой карточке айдишники пациента и доктора
                     && (stepCard.getDoctor().getId().equals(idDoctor))) {
-                card = stepCard;
+                card = stepCard;       // присваеваем найденую карточку ранее объявленному объекту
             }
         }
-        return new ResponseEntity<>(card, HttpStatus.OK);
+        return new ResponseEntity<>(card, HttpStatus.OK);     // выводим объект
     }
 
     @RequestMapping(value = "/card/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
