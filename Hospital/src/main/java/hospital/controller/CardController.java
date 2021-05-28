@@ -1,7 +1,7 @@
 package hospital.controller;
 
 import hospital.model.Card;
-import hospital.service.GeneralService;
+import hospital.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +17,27 @@ public class CardController {
 
     @Qualifier("cardServiceImpl")
     @Autowired
-    GeneralService generalService;
+    CardService cardService;
+
+    @RequestMapping(value = "/card/{idPatient}/{idDoctor}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)  /*Прописываем путь 
+    по которому вызывается метод и прописываем его работу */
+    public ResponseEntity<Card> getCarByIdsPatientAndDoctor(@PathVariable("idPatient") Long idPatient,
+                                                            @PathVariable("idDoctor") Long idDoctor) {
+        if (idPatient == null || idDoctor == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        List<Card> cards = this.cardService.findAll();
+        Card card = new Card();
+        for (Card stepCard:
+             cards) {
+            if ((stepCard.getPatient().getId().equals(idPatient))
+                    && (stepCard.getDoctor().getId().equals(idDoctor))) {
+                card = stepCard;
+            }
+        }
+        return new ResponseEntity<>(card, HttpStatus.OK);
+    }
 
     @RequestMapping(value = "/card/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Card> getCardById(@PathVariable("id") Long id) {
@@ -25,7 +45,7 @@ public class CardController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Card card = (Card) this.generalService.findById(id);
+        Card card = (Card) this.cardService.findById(id);
 
         if (card == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -40,26 +60,26 @@ public class CardController {
         if (card == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        this.generalService.save(card);
+        this.cardService.save(card);
         return new ResponseEntity<>(card, headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/card/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Card> deleteCard(@PathVariable("id") Long id) {
-        Card card = (Card) this.generalService.findById(id);
+        Card card = (Card) this.cardService.findById(id);
 
         if (card == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        this.generalService.delete(id);
+        this.cardService.delete(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @RequestMapping(value = "/cards", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Card>> getAllCards() {
-        List<Card> cards = this.generalService.findAll();
+        List<Card> cards = this.cardService.findAll();
 
         if (cards.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
