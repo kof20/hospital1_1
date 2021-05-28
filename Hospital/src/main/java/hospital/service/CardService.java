@@ -1,3 +1,4 @@
+//интерфейс карточки
 package hospital.service;
 
 import hospital.model.Card;
