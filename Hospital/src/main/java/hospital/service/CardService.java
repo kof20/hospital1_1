@@ -1,4 +1,4 @@
-//интерфейс карточки
+ //метод поиска доктора и пациента в сервисе
 package hospital.service;
 
 import hospital.model.Card;
